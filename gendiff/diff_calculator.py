@@ -1,5 +1,6 @@
-import json
 import os
+
+from gendiff.parser import parse
 
 
 def to_str(value):
@@ -8,16 +9,34 @@ def to_str(value):
     return str(value)
 
 
+def safe_path(path):
+    resolved = os.path.realpath(path)
+    base_dir = os.path.realpath(os.getcwd())
+    
+    if resolved != base_dir and not resolved.startswith(base_dir + os.sep):
+        raise PermissionError(f"Path {path} is outside the allowed directory.")
+    return resolved
+
+
+def get_file_data(file_path):
+    abs_path = safe_path(file_path)
+    
+    if not os.path.isfile(abs_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+
+    _, extension = os.path.splitext(abs_path)
+    format_name = extension.strip(".").lower()
+    
+    with open(abs_path, "r", encoding="utf-8") as f:
+        content = f.read()
+        
+    return parse(content, format_name)
+
+
 def generate_diff(file_path1, file_path2):
-    abs_path1 = os.path.abspath(file_path1)
-    abs_path2 = os.path.abspath(file_path2)
-    
-    with open(abs_path1, "r") as f1:
-        data1 = json.load(f1)
-    
-    with open(abs_path2, "r") as f2:
-        data2 = json.load(f2)
-    
+    data1 = get_file_data(file_path1)
+    data2 = get_file_data(file_path2)
+
     all_keys = sorted(data1.keys() | data2.keys())
     
     lines = ["{"]

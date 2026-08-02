@@ -18,7 +18,7 @@ def generate_diff(file_path1, file_path2):
     with open(abs_path2, "r") as f2:
         data2 = json.load(f2)
     
-    all_keys = sorted(list(data1.keys() | data2.keys()))
+    all_keys = sorted(data1.keys() | data2.keys())
     
     lines = ["{"]
     

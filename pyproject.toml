@@ -26,3 +26,25 @@ packages = ["gendiff"]
 
 [project.scripts]
 gendiff = "gendiff.scripts.gendiff:main"
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+
+[tool.coverage.run]
+relative_files = true
+source = ["gendiff"]
+
+[tool.coverage.paths]
+source = [
+    "gendiff",
+    "*/site-packages/gendiff",
+    ".venv/lib/*/site-packages/gendiff"
+]

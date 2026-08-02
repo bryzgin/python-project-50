@@ -35,6 +35,8 @@ jobs:
           make lint
 
       - name: Run tests with coverage
+        env:
+          PYTHONPATH: .
         run: |
           make test-coverage
 

@@ -12,7 +12,7 @@ def to_str(value):
 def safe_path(path):
     resolved = os.path.realpath(path)
     base_dir = os.path.realpath(os.getcwd())
-    
+
     if resolved != base_dir and not resolved.startswith(base_dir + os.sep):
         raise PermissionError(f"Path {path} is outside the allowed directory.")
     return resolved
@@ -20,16 +20,16 @@ def safe_path(path):
 
 def get_file_data(file_path):
     abs_path = safe_path(file_path)
-    
+
     if not os.path.isfile(abs_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
 
     _, extension = os.path.splitext(abs_path)
     format_name = extension.strip(".").lower()
-    
+
     with open(abs_path, "r", encoding="utf-8") as f:
         content = f.read()
-        
+
     return parse(content, format_name)
 
 
@@ -38,20 +38,20 @@ def generate_diff(file_path1, file_path2):
     data2 = get_file_data(file_path2)
 
     all_keys = sorted(data1.keys() | data2.keys())
-    
+
     lines = ["{"]
-    
+
     for key in all_keys:
         if key in data1 and key not in data2:
-            lines.append(f"  - {key}: {to_str(data1[key])}")            
+            lines.append(f"  - {key}: {to_str(data1[key])}")
         elif key not in data1 and key in data2:
-            lines.append(f"  + {key}: {to_str(data2[key])}")            
+            lines.append(f"  + {key}: {to_str(data2[key])}")
         elif data1[key] != data2[key]:
             lines.append(f"  - {key}: {to_str(data1[key])}")
             lines.append(f"  + {key}: {to_str(data2[key])}")
         else:
             lines.append(f"    {key}: {to_str(data1[key])}")
-    
+
     lines.append("}")
-    
+
     return "\n".join(lines)

@@ -16,3 +16,14 @@ def test_generate_diff_json():
         expected_output = f.read()
     
     assert generate_diff(file1, file2) == expected_output
+
+
+def test_generate_diff_yaml():
+    file1 = get_fixture_path("file1.yml")
+    file2 = get_fixture_path("file2.yaml")
+    expected_file = get_fixture_path("expected_flat.txt")
+    
+    with open(expected_file, "r", encoding="utf-8") as f:
+        expected_output = f.read()
+    
+    assert generate_diff(file1, file2) == expected_output

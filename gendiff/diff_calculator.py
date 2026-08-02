@@ -10,18 +10,25 @@ def to_str(value):
 
 
 def get_file_data(file_path):
-    normalized_path = os.path.normpath(file_path)
-    abs_path = os.path.abspath(normalized_path)
+    abs_path = os.path.realpath(file_path)    
+    allowed_root = os.path.realpath(os.getcwd())    
+    common_path = os.path.commonpath([allowed_root, abs_path])
     
-    if not os.path.exists(abs_path) or not os.path.isfile(abs_path):
+    if common_path != allowed_root:
+        raise PermissionError(
+            f"Security Error: Access denied. "
+            f"""Path "{file_path}" escapes the execution directory."""
+        )
+
+    if not os.path.isfile(abs_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
-    
+
     _, extension = os.path.splitext(abs_path)
     format_name = extension.strip(".").lower()
     
     with open(abs_path, "r", encoding="utf-8") as f:
         content = f.read()
-    
+        
     return parse(content, format_name)
 
 

@@ -23,13 +23,15 @@ def generate_diff(file_path1, file_path2):
     lines = ["{"]
     
     for key in all_keys:
-        if key in data1 and key in data2:
-            lines.append(f" - {key}: {to_str(data1[key])}")        
+        if key in data1 and key not in data2:
+            lines.append(f"  - {key}: {to_str(data1[key])}")            
         elif key not in data1 and key in data2:
-            lines.append(f" - {key}: {to_str(data1[key])}")
-            lines.append(f" + {key}: {to_str(data2[key])}")        
+            lines.append(f"  + {key}: {to_str(data2[key])}")            
+        elif data1[key] != data2[key]:
+            lines.append(f"  - {key}: {to_str(data1[key])}")
+            lines.append(f"  + {key}: {to_str(data2[key])}")
         else:
-            lines.append(f"   {key}: {to_str(data1[key])}")
+            lines.append(f"    {key}: {to_str(data1[key])}")
     
     lines.append("}")
     

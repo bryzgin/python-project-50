@@ -12,10 +12,13 @@ def to_str(value):
 def get_file_data(file_path):
     abs_path = os.path.abspath(file_path)
     project_root = os.path.abspath(os.getcwd())
-    common_path = os.path.commonpath([project_root, abs_path])
     
-    if common_path != project_root:
-        raise PermissionError("Access denied: File is outside the project directory")
+    try:
+        common_path = os.path.commonpath([project_root, abs_path])        
+        if common_path != project_root:
+            raise PermissionError("Access denied: File is outside the project directory.")
+    except ValueError:
+        raise PermissionError("Access denied: Invalid file path.")
     
     _, extension = os.path.splitext(abs_path)
     format_name = extension.strip(".").lower()

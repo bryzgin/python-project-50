@@ -9,17 +9,18 @@ def to_str(value):
     return str(value)
 
 
-def get_file_data(file_path):
-    abs_path = os.path.realpath(file_path)    
-    allowed_root = os.path.realpath(os.getcwd())    
-    common_path = os.path.commonpath([allowed_root, abs_path])
+def safe_path(path):
+    resolved = os.path.realpath(path)
+    base_dir = os.path.realpath(os.getcwd())
     
-    if common_path != allowed_root:
-        raise PermissionError(
-            f"Security Error: Access denied. "
-            f"""Path "{file_path}" escapes the execution directory."""
-        )
+    if resolved != base_dir and not resolved.startswith(base_dir + os.sep):
+        raise PermissionError(f"Path {path} is outside the allowed directory.")
+    return resolved
 
+
+def get_file_data(file_path):
+    abs_path = safe_path(file_path)
+    
     if not os.path.isfile(abs_path):
         raise FileNotFoundError(f"The file {file_path} does not exist.")
 

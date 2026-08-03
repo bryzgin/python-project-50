@@ -28,7 +28,7 @@ def test_generate_diff_yaml():
     with open(expected_file, "r", encoding="utf-8") as f:
         expected_output = f.read()
 
-    assert generate_diff(file1, file2) == expected_output
+    assert generate_diff(file1, file2, format_name="stylish") == expected_output
 
 
 def test_generate_diff_security_path_traversal():

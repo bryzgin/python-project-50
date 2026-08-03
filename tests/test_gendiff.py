@@ -12,23 +12,26 @@ def get_fixture_path(file_name):
 def test_generate_diff_json():
     file1 = get_fixture_path("file1.json")
     file2 = get_fixture_path("file2.json")
-    expected_file = get_fixture_path("expected_flat.txt")
+    expected_file = get_fixture_path("expected_nested.txt")
 
     with open(expected_file, "r", encoding="utf-8") as f:
-        expected_output = f.read()
+        expected_output = f.read().replace("\r\n", "\n").strip()
 
-    assert generate_diff(file1, file2) == expected_output
+    assert generate_diff(file1, file2).strip() == expected_output
 
 
 def test_generate_diff_yaml():
     file1 = get_fixture_path("file1.yml")
     file2 = get_fixture_path("file2.yaml")
-    expected_file = get_fixture_path("expected_flat.txt")
+    expected_file = get_fixture_path("expected_nested.txt")
 
     with open(expected_file, "r", encoding="utf-8") as f:
-        expected_output = f.read()
+        expected_output = f.read().replace("\r\n", "\n").strip()
 
-    assert generate_diff(file1, file2) == expected_output
+    assert (
+        generate_diff(file1, file2, format_name="stylish").strip()
+        == expected_output
+    )
 
 
 def test_generate_diff_security_path_traversal():

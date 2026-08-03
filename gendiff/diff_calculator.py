@@ -1,8 +1,8 @@
 import os
 
+from gendiff.formatters.stylish import render_stylish
 from gendiff.parser import parse
 from gendiff.tree_builder import build_diff_tree
-from gendiff.formatters.stylish import render_stylish
 
 
 def to_str(value):
@@ -40,8 +40,8 @@ def generate_diff(file_path1, file_path2, format_name="stylish"):
     data2 = get_file_data(file_path2)
 
     diff_tree = build_diff_tree(data1, data2)
-    
+
     if format_name == "stylish":
         return render_stylish(diff_tree)
-    
+
     raise ValueError(f"Unknown format: {format_name}")

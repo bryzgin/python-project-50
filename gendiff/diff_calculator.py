@@ -1,6 +1,8 @@
 import os
 
 from gendiff.parser import parse
+from gendiff.tree_builder import build_diff_tree
+from gendiff.formatters.stylish import render_stylish
 
 
 def to_str(value):
@@ -33,25 +35,13 @@ def get_file_data(file_path):
     return parse(content, format_name)
 
 
-def generate_diff(file_path1, file_path2):
+def generate_diff(file_path1, file_path2, format_name="stylish"):
     data1 = get_file_data(file_path1)
     data2 = get_file_data(file_path2)
 
-    all_keys = sorted(data1.keys() | data2.keys())
-
-    lines = ["{"]
-
-    for key in all_keys:
-        if key in data1 and key not in data2:
-            lines.append(f"  - {key}: {to_str(data1[key])}")
-        elif key not in data1 and key in data2:
-            lines.append(f"  + {key}: {to_str(data2[key])}")
-        elif data1[key] != data2[key]:
-            lines.append(f"  - {key}: {to_str(data1[key])}")
-            lines.append(f"  + {key}: {to_str(data2[key])}")
-        else:
-            lines.append(f"    {key}: {to_str(data1[key])}")
-
-    lines.append("}")
-
-    return "\n".join(lines)
+    diff_tree = build_diff_tree(data1, data2)
+    
+    if format_name == "stylish":
+        return render_stylish(diff_tree)
+    
+    raise ValueError(f"Unknown format: {format_name}")
